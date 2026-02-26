@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+  pg-master:
+    image: postgres:15
+    container_name: pg-master
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: labdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - pgnet
+
+  pg-standby:
+    image: postgres:15
+    container_name: pg-standby
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpass
+      POSTGRES_DB: labdb
+    volumes:
+      - pgstandby:/var/lib/postgresql/data
+    networks:
+      - pgnet
+    depends_on:
+      - pg-master
+
+  pg-logical:
+    image: postgres:15
+    container_name: pg-logical
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpass
+      POSTGRES_DB: labdb
+    volumes:
+      - pglogical:/var/lib/postgresql/data
+    networks:
+      - pgnet
+
+
+
+volumes:
+  pgdata:
+  pgstandby:
+  pglogical:
+
+networks:
+  pgnet:
+
